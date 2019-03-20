@@ -27,6 +27,7 @@ class AdminController extends Controller
             ) {
                 //echo "Sucesso";
                 //die;
+                Session::put('adminSession', $data['email']);
                 return redirect::action('AdminController@dashboard');
             } else {
                 //echo "Falhou";
@@ -40,12 +41,17 @@ class AdminController extends Controller
         public function dashboard()
         {
             //echo "teste";die;
+            /*if (Session::has('adminSession')) {
+
+            } else {
+                return redirect('/admin')->with('flash_message_error',  'Por favor, faça login para acessar.');
+            }*/
             return view('admin.dashboard');
         }
 
     public function logout()
     {
         Session::flush();
-        return \redirect('/admin')->with('flash_message_success',  'Usuário deslogado com sucesso.');
+        return redirect('/admin')->with('flash_message_success',  'Usuário deslogado com sucesso.');
     }
 }
