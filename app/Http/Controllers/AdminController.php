@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Session;
 
 class AdminController extends Controller
 {
@@ -28,8 +29,9 @@ class AdminController extends Controller
                 //die;
                 return redirect::action('AdminController@dashboard');
             } else {
-                echo "Falhou";
-                die;
+                //echo "Falhou";
+                //die;
+                return redirect('/admin')->with('flash_message_error',  'Usuário e/ou senha inválidos');
             }
         }
             return view('admin.admin_login');
@@ -40,4 +42,10 @@ class AdminController extends Controller
             //echo "teste";die;
             return view('admin.dashboard');
         }
+
+    public function logout()
+    {
+        Session::flush();
+        return \redirect('/admin')->with('flash_message_success',  'Usuário deslogado com sucesso.');
+    }
 }
