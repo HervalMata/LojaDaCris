@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
 
@@ -53,5 +55,42 @@ class AdminController extends Controller
     {
         Session::flush();
         return redirect('/admin')->with('flash_message_success',  'Usuário deslogado com sucesso.');
+    }
+
+    public function settings()
+    {
+        return view('admin.settings');
+    }
+
+    public function chkPassword(Request $request)
+    {
+        $data = $request->all();
+        $current_password = $data['current-pwd'];
+        $check_password = User::where(['admin' => '1'])->first();
+        if (Hash::check($current_password, $check_password->password)) {
+            echo "true";die;
+        } else {
+            echo "false";die;
+        }
+    }
+
+    public function updatePassword(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            $data = $request->all();
+            $check_password = User::where(['email' => Auth::user()->email])->first();
+            $current_password = $data['current-pwd'];
+            if (Hash::check($current_password, $check_password->password)) {
+                $password = bcrypt($data['new_pwd']);
+                User::where('id', '1')->update(['password' => $password]);
+                return redirect('/admin/settings')->with('flash_message_success',  'Senha atualizada com sucesso.');
+            } else {
+                return redirect('/admin/settings')->with('flash_message_error',  'Senha atual incorreta.');
+            }
+        }
+
+
+
+
     }
 }
